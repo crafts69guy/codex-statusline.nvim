@@ -78,6 +78,28 @@ counts, or active agent list. The former Herdr/Lua observer has been removed.
 The launcher does not read session history, query Herdr, or write global config.
 Plain `codex` and `orch codex` use your global Codex footer settings instead.
 
+To make plain `codex` (and wrappers such as `orch codex`) use Hue, declare the
+same preset in `$CODEX_HOME/config.toml` (default `~/.codex/config.toml`):
+
+```toml
+[tui]
+theme = "hue-mua"
+status_line = ["project-name", "git-branch", "model-with-reasoning", "context-remaining"]
+status_line_use_colors = true
+```
+
+Symlinking the themes instead of copying them keeps installed copies current, so
+regenerated files apply on the next session. Point the links at this repository's
+`themes/` or at a hue-theme checkout's `packages/codex-cli-themes/themes/`:
+
+```fish
+for mood in mua huong cung
+    ln -sf /path/to/codex-statusline.nvim/themes/hue-$mood.tmTheme "$codex_theme_home/themes/"
+end
+```
+
+The launcher's `--mood` still overrides the global theme for a single session.
+
 Development checks need Python 3 in addition to Fish:
 
 ```fish
