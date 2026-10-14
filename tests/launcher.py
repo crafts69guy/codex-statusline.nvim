@@ -40,6 +40,15 @@ for scope, color in {
 }.items():
     assert scopes[scope]["foreground"] == color, scope
 
+for mood in ('mua', 'huong', 'cung'):
+    with (ROOT / f'themes/hue-{mood}.tmTheme').open('rb') as source:
+        themed = plistlib.load(source)
+    assert themed['name'] == f'hue-{mood}'
+    mood_scopes = {entry.get('scope'): entry['settings'] for entry in themed['settings']}
+    assert 'codex.accent' in mood_scopes
+    assert 'background' in mood_scopes['markup.inserted']
+    assert 'background' in mood_scopes['markup.deleted']
+
 with tempfile.TemporaryDirectory(prefix="codex-statusline-tests-") as directory:
     temp = Path(directory)
     record = temp / "record.json"
@@ -79,8 +88,22 @@ with tempfile.TemporaryDirectory(prefix="codex-statusline-tests-") as directory:
         assert child.returncode == 37, child.stderr
         assert json.loads(record.read_text())["argv"] == PRESET + arguments
 
+    for flags, mood in ((['--mood', 'huong'], 'huong'), (['--mood=cung'], 'cung'),
+                        (['--mood', 'mua', '--'], 'mua'), (['--'], 'mua')):
+        arguments = ['resume', "quote ' space", '', 'line\nbreak', '-c', 'tui.theme=override']
+        child = subprocess.run([str(launcher), *flags, *arguments], cwd=temp, env=env,
+                               capture_output=True, timeout=5)
+        assert child.returncode == 37, child.stderr
+        preset = PRESET[:-1] + [f'tui.theme=hue-{mood}']
+        assert json.loads(record.read_text())['argv'] == preset + arguments
+    for arguments in (['--mood'], ['--mood='], ['--mood', 'unknown']):
+        record.unlink(missing_ok=True)
+        child = subprocess.run([str(launcher), *arguments], env=env,
+                               capture_output=True, timeout=5)
+        assert child.returncode != 0 and child.stderr and not record.exists()
+
     for signum in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
-        record.unlink()
+        record.unlink(missing_ok=True)
         master, slave = pty.openpty()
         child = subprocess.Popen([str(launcher), "resume", "session"], cwd=temp,
                                  env=dict(env, WAIT_FOR_SIGNAL="1"),

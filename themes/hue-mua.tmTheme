@@ -510,6 +510,43 @@
         <string>#FF5A63</string>
       </dict>
     </dict>
+    <dict>
+      <key>name</key>
+      <string>Codex accent</string>
+      <key>scope</key>
+      <string>codex.accent</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#00CF6A</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Codex inserted</string>
+      <key>scope</key>
+      <string>markup.inserted</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#00CF6A</string>
+        <key>background</key>
+        <string>#003228</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Codex deleted</string>
+      <key>scope</key>
+      <string>markup.deleted</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#FF5A63</string>
+        <key>background</key>
+        <string>#321B26</string>
+      </dict>
+    </dict>
   </array>
 </dict>
 </plist>

@@ -1,3 +1,22 @@
 #!/usr/bin/env -S fish --no-config
 # exec preserves the foreground PID, terminal, signals, and exit status.
-exec codex -c 'tui.status_line=["project-name","git-branch","model-with-reasoning","context-remaining"]' -c tui.status_line_use_colors=true -c tui.theme=hue-mua $argv
+set -l mood mua
+if test "$argv[1]" = --mood
+    if test (count $argv) -lt 2
+        echo 'codex-statusline: --mood requires mua, huong, or cung' >&2
+        exit 1
+    end
+    set mood $argv[2]
+    set -e argv[1..2]
+else if string match -q -- '--mood=*' "$argv[1]"
+    set mood (string replace -- '--mood=' '' "$argv[1]")
+    set -e argv[1]
+end
+if not contains -- "$mood" mua huong cung
+    echo 'codex-statusline: invalid mood' >&2
+    exit 1
+end
+if test "$argv[1]" = --
+    set -e argv[1]
+end
+exec codex -c 'tui.status_line=["project-name","git-branch","model-with-reasoning","context-remaining"]' -c tui.status_line_use_colors=true -c "tui.theme=hue-$mood" $argv

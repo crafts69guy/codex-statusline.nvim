@@ -12,7 +12,7 @@ my-project · main · gpt-6.1-sol medium · 92% left
 
 Runtime dependencies: Fish and Codex. Verified with Codex 0.162.1.
 
-Install the bundled Huế Mưa custom theme once from the repository root,
+Install all three bundled Hue custom themes once from the repository root,
 including when upgrading an existing launcher installation:
 
 ```fish
@@ -21,12 +21,12 @@ if set -q CODEX_HOME
     set codex_theme_home $CODEX_HOME
 end
 mkdir -p "$codex_theme_home/themes"
-cp -n themes/hue-mua.tmTheme "$codex_theme_home/themes/hue-mua.tmTheme"
+cp -n themes/hue-*.tmTheme "$codex_theme_home/themes/"
 ```
 
 This uses your custom `CODEX_HOME` when set and preserves any existing
-`hue-mua.tmTheme`. To refresh the installed copy after an update, review or back
-up that file and deliberately replace it with the bundled version. The launcher
+`hue-*.tmTheme` files. To refresh installed copies after an update, review or back
+up those files and deliberately replace them with the bundled versions. The launcher
 never installs or updates theme files; without the custom theme, Codex falls
 back to its native default.
 
@@ -36,19 +36,26 @@ Install the repository anywhere and put its executable launcher on PATH:
 mkdir -p ~/.local/bin
 ln -s /path/to/codex-statusline.nvim/bin/codex-statusline ~/.local/bin/codex-statusline
 codex-statusline
+codex-statusline --mood huong -- resume SESSION_ID
+codex-statusline --mood=cung -- 'prompt with spaces'
 codex-statusline --cd ~/project resume SESSION_ID
 codex-statusline fork SESSION_ID
 ```
 
-The symlink works from any directory. Arguments pass unchanged to Codex,
+The symlink works from any directory. The optional leading `--mood` accepts
+`mua` (default), `huong`, or `cung`; `--mood=<id>` is also supported. An optional
+leading `--` separates wrapper flags. Invalid or missing moods fail before
+Codex starts. Remaining arguments pass unchanged to Codex,
 including noninteractive commands, help, and version. `exec` keeps Codex's PID,
 terminal, signal handling, and exit status. Fish runs without startup config.
 
 The launcher supplies `tui.status_line`, `tui.status_line_use_colors=true`, and
-`tui.theme=hue-mua` before your arguments. Huế Mưa applies to syntax highlighting
-and overrides your global theme for launcher sessions. The terminal background
-and native footer's per-field styles remain controlled by Codex and your
-terminal; this does not theme the whole terminal. CLI custom themes use
+`tui.theme=hue-<mood>` before your arguments. The selected Hue theme supplies syntax
+colors, the `codex.accent` foreground, and inserted/deleted diff foregrounds and
+backgrounds, and overrides your global theme for launcher sessions. Native footer
+foregrounds derive from these theme colors, with Codex applying its own contrast
+and saturation adjustments. The terminal background and native footer's per-field
+styles remain controlled by Codex and your terminal. CLI custom themes use
 TextMate `.tmTheme` files, as documented in
 [CLI customization](https://learn.chatgpt.com/docs/cli-customization).
 Later explicit overrides take precedence:
@@ -88,6 +95,12 @@ Uninstall the launcher by removing its symlink:
 rm ~/.local/bin/codex-statusline
 ```
 
-MIT licensed. The bundled Huế Mưa theme is copied verbatim from
-[hue-theme](https://github.com/crafts69guy/hue-theme) and retains its upstream
+The terminal Hue mood is selected separately; the wrapper chooses a Codex theme
+at startup. Changing `/theme` mid-session does not change the terminal mood.
+To remove installed themes too, explicitly remove `hue-mua.tmTheme`,
+`hue-huong.tmTheme`, and `hue-cung.tmTheme` from your `$CODEX_HOME/themes` (or
+`~/.codex/themes`) after backing up any local changes.
+
+MIT licensed. The three bundled Hue themes are copied verbatim from
+[hue-theme](https://github.com/crafts69guy/hue-theme) and retain its upstream
 license in [themes/LICENSE](themes/LICENSE).
