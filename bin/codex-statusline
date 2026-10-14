@@ -1,0 +1,3 @@
+#!/usr/bin/env -S fish --no-config
+# exec preserves the foreground PID, terminal, signals, and exit status.
+exec codex -c 'tui.status_line=["project-name","git-branch","model-with-reasoning","context-remaining"]' -c tui.status_line_use_colors=true -c tui.theme=hue-mua $argv
